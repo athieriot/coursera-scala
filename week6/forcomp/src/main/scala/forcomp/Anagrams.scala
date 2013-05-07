@@ -91,21 +91,36 @@ object Anagrams {
    *  in the example above could have been displayed in some other order.
    */
   def combinations(occurrences: Occurrences): List[Occurrences] = {
-    
-    def allCombinations(occurrences: Occurrences): List[Occurrences] = occurrences match {
-      case Nil => List()
-      case head :: tail => 
-        val test = for {
-          p <- occurrences
-          i <- 1 until p._2 + 1
-        } yield {
-          (p._1, i) 
-        }
-        
-        allCombinations(occurrences.tail) :+ test
-    }
-    
-    allCombinations(occurrences)
+
+	  def allOccurences(p: (Char, Int)): Seq[(Char, Int)] = {
+		  for {
+			  i: Int <- 0 until p._2 + 1
+		  } yield {
+			  (p._1, i)
+		  }
+	  }                                  
+
+	  val everything = for {
+		  p <- occurrences
+	  } yield {
+		  allOccurences(p)                
+	  }
+
+	  def cartesianProduct(xss: List[Seq[(Char, Int)]]): Seq[Seq[(Char, Int)]] = xss match {
+	  case Nil => List(Nil)
+	  case h :: t => {
+		  for {
+			  xh <- h
+			  xt <- cartesianProduct(t)
+		  } yield xh +: xt
+	  }
+	  }                                        
+
+	  val test = cartesianProduct(everything).map(p => {
+		  p.filter(_._2 != 0).toList
+	  })            
+
+	  test.toList
   }
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
