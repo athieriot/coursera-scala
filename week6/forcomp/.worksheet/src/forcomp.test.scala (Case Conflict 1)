@@ -1,0 +1,12 @@
+package forcomp
+
+import Anagrams._
+
+object Test {;import org.scalaide.worksheet.runtime.library.WorksheetSupport._; def main(args: Array[String])=$execute{;$skip(88); 
+	val sentence = List("Linux", "rulez");System.out.println("""sentence  : List[String] = """ + $show(sentence ));$skip(65); val res$0 = 
+	
+	Anagrams.combinations(Anagrams.sentenceOccurrences(sentence));System.out.println("""res0: List[forcomp.Anagrams.Occurrences] = """ + $show(res$0))}
+}
+
+
+//.foldLeft(List())((l: List[Word], occ: Occurrences) => l :: dictionaryByOccurrences(occ))

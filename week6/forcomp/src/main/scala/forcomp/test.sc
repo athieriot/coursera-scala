@@ -1,42 +1,32 @@
 package forcomp
 
-object test {
-  println("Welcome to the Scala worksheet")       //> Welcome to the Scala worksheet
-  type Occurrences = List[(Char, Int)]
-  
-  val abba = List(('a', 2), ('b', 2))             //> abba  : List[(Char, Int)] = List((a,2), (b,2))
+import common._
 
-   
-        def allOccurences(p: (Char, Int)): Seq[(Char, Int)] = {
-          for {
-            i: Int <- 0 until p._2 + 1
-          } yield {
-            (p._1, i)
-          }
-        }                                         //> allOccurences: (p: (Char, Int))Seq[(Char, Int)]
-        
-        val everything = for{
-          p <- abba
-        } yield {
-          allOccurences(p)                        //> everything  : List[Seq[(Char, Int)]] = List(Vector((a,0), (a,1), (a,2)), Vec
-                                                  //| tor((b,0), (b,1), (b,2)))
-        }
-   
-   def cartesianProduct(xss: List[Seq[(Char, Int)]]): Seq[Seq[(Char, Int)]] = xss match {
-    case Nil => List(Nil)
-    case h :: t => {
-    	for {
-    	xh <- h
-    	xt <- cartesianProduct(t)
-    	} yield xh +: xt
-   }
-  }                                               //> cartesianProduct: (xss: List[Seq[(Char, Int)]])Seq[Seq[(Char, Int)]]
-     
-   val test = cartesianProduct(everything).map(p => {
-   p.filter(_._2 != 0)
-   })                                             //> test  : Seq[Seq[(Char, Int)]] = Vector(List(), List((b,1)), List((b,2)), Lis
-                                                  //| t((a,1)), List((a,1), (b,1)), List((a,1), (b,2)), List((a,2)), List((a,2), (
-                                                  //| b,1)), List((a,2), (b,2)))
-   
-  test.length                                     //> res0: Int = 9
+object test {
+  //val sentence = List("Linux", "rulez")
+  
+  val list = List("Linux", "rulez")               //> list  : List[String] = List(Linux, rulez)
+  
+	def subAnagrams(oc: Anagrams.Occurrences) : List[Anagrams.Sentence] = oc match {
+	  case Nil => List(Nil)
+	  case l => {
+	    for {
+	      combi <- Anagrams.combinations(l)
+	      w <- Anagrams.dictionaryByOccurrences.apply(combi)
+	      sent <- subAnagrams(Anagrams.subtract(l, Anagrams.wordOccurrences(w)).sorted)
+	    } yield {
+	      w :: sent
+	    }
+	  }
+	}                                         //> subAnagrams: (oc: forcomp.Anagrams.Occurrences)List[forcomp.Anagrams.Sentenc
+                                                  //| e]
+	
+	subAnagrams(Anagrams.sentenceOccurrences(list))
+                                                  //> res0: List[forcomp.Anagrams.Sentence] = List(List(Zulu, Lin, Rex), List(Zulu
+                                                  //| , nil, Rex), List(Zulu, Rex, Lin), List(Zulu, Rex, nil), List(null, Uzi, Rex
+                                                  //| ), List(null, Rex, Uzi), List(Uzi, null, Rex), List(Uzi, Rex, null), List(Li
+                                                  //| n, Zulu, Rex), List(Lin, Rex, Zulu), List(nil, Zulu, Rex), List(nil, Rex, Zu
+                                                  //| lu), List(Linux, rulez), List(Rex, Zulu, Lin), List(Rex, Zulu, nil), List(Re
+                                                  //| x, null, Uzi), List(Rex, Uzi, null), List(Rex, Lin, Zulu), List(Rex, nil, Zu
+                                                  //| lu), List(rulez, Linux))
 }
